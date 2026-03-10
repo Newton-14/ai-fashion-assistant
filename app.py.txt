@@ -1,0 +1,19 @@
+import streamlit as st
+
+st.title("AI Style Advisor")
+
+st.write("Upload your photo to get style suggestions")
+
+photo = st.file_uploader("Upload Photo", type=["jpg","png","jpeg"])
+
+if photo is not None:
+    st.image(photo, caption="Your Photo", use_column_width=True)
+
+    st.write("### Hairstyle Recommendation")
+    st.write("Layered shoulder-length hairstyle")
+
+    st.write("### Makeup Recommendation")
+    st.write("Soft glam makeup with nude lipstick")
+
+    st.write("### Outfit Recommendation")
+    st.write("Casual V-neck outfit")
