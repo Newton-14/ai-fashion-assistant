@@ -3,9 +3,7 @@ import cv2
 import numpy as np
 from PIL import Image
 
-st.title("AI Fashion & Hairstyle Assistant")
-
-st.write("Upload your photo and AI will analyze your face shape.")
+st.title("AI Hairstyle & Fashion Assistant")
 
 uploaded_file = st.file_uploader("Upload your photo", type=["jpg","png","jpeg"])
 
@@ -13,7 +11,7 @@ def detect_face_shape(w,h):
 
     ratio = w/h
 
-    if ratio > 0.95 and ratio < 1.05:
+    if 0.95 <= ratio <= 1.05:
         return "Round"
 
     elif ratio > 1.05:
@@ -21,6 +19,7 @@ def detect_face_shape(w,h):
 
     else:
         return "Oval"
+
 
 if uploaded_file is not None:
 
@@ -40,39 +39,33 @@ if uploaded_file is not None:
         minSize=(30,30)
     )
 
+    if len(faces) == 0:
+        st.write("No face detected")
+
     for (x,y,w,h) in faces:
 
         cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
 
-        shape = detect_face_shape(w,h)
+        face_shape = detect_face_shape(w,h)
 
-        cv2.putText(
-            img,
-            shape,
-            (x,y-10),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            1,
-            (255,0,0),
-            2
-        )
+        st.image(img, caption="Detected Face", use_column_width=True)
 
-        st.image(img, caption="AI Face Detection", use_column_width=True)
+        st.subheader("Face Shape")
+        st.write(face_shape)
 
-        st.subheader("AI Analysis")
+        st.subheader("Recommended Hairstyle")
 
-        st.write("Detected Face Shape:", shape)
+        if face_shape == "Round":
 
-        if shape == "Round":
+            st.image("https://i.imgur.com/8zQZ4qX.jpg", caption="Textured Fade")
+            st.write("Outfit: Streetwear Jacket")
 
-            st.write("Recommended Hairstyle: Textured Fade")
-            st.write("Recommended Outfit: Streetwear Jacket")
+        elif face_shape == "Square":
 
-        elif shape == "Square":
-
-            st.write("Recommended Hairstyle: Curly Top Fade")
-            st.write("Recommended Outfit: Smart Casual Blazer")
+            st.image("https://i.imgur.com/BK9XK6p.jpg", caption="Curly Top Fade")
+            st.write("Outfit: Smart Casual Blazer")
 
         else:
 
-            st.write("Recommended Hairstyle: Classic Side Part")
-            st.write("Recommended Outfit: Casual V-Neck Outfit")
+            st.image("https://i.imgur.com/2DhmtJ4.jpg", caption="Classic Side Part")
+            st.write("Outfit: Casual V-Neck Outfit")
