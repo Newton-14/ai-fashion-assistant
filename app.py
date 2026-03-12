@@ -34,13 +34,13 @@ if uploaded_file is not None:
 
     faces = face_cascade.detectMultiScale(
         gray,
-        scaleFactor=1.1,
-        minNeighbors=4,
-        minSize=(30,30)
+        scaleFactor=1.2,
+        minNeighbors=8,
+        minSize=(100,100)
     )
 
-    if len(faces) == 0:
-        st.write("No face detected")
+    if len(faces) > 1:
+        faces = faces[:1]
 
     for (x,y,w,h) in faces:
 
