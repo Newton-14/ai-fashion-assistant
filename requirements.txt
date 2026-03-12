@@ -1,4 +1,6 @@
 streamlit
-pillow
 opencv-python-headless
 numpy
+pillow
+requests
+mediapipe
