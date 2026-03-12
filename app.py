@@ -15,7 +15,9 @@ if option == "Upload Photo":
 else:
     uploaded_file = st.camera_input("Take a photo")
 
-mp_face = mp.solutions.face_detection
+from mediapipe.python.solutions import face_detection
+mp_face = face_detection
+
 face_detection = mp_face.FaceDetection(model_selection=1, min_detection_confidence=0.6)
 
 def detect_face_shape(w,h):
