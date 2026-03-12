@@ -2,37 +2,25 @@ import streamlit as st
 import cv2
 import numpy as np
 from PIL import Image
-import random
 
-st.title("AI Fashion Assistant 👗")
+st.title("AI Fashion & Hairstyle Assistant")
 
-st.write("Upload your photo and AI will detect your face.")
+st.write("Upload your photo and AI will analyze your face shape.")
 
 uploaded_file = st.file_uploader("Upload your photo", type=["jpg","png","jpeg"])
 
-hairstyles = [
-"Curly fade",
-"Buzz cut",
-"Afro style",
-"Short textured cut",
-"Side part fade"
-]
+def detect_face_shape(w,h):
 
-outfits = [
-"Casual V-neck outfit",
-"Streetwear hoodie",
-"Smart casual blazer",
-"Summer t-shirt and jeans",
-"Sporty tracksuit"
-]
+    ratio = w/h
 
-makeup = [
-"Natural glow",
-"Soft glam",
-"Matte finish",
-"Bold lipstick",
-"Minimal makeup"
-]
+    if ratio > 0.95 and ratio < 1.05:
+        return "Round"
+
+    elif ratio > 1.05:
+        return "Square"
+
+    else:
+        return "Oval"
 
 if uploaded_file is not None:
 
@@ -45,20 +33,46 @@ if uploaded_file is not None:
         cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
     )
 
-    faces = face_cascade.detectMultiScale(gray,1.3,5)
+    faces = face_cascade.detectMultiScale(
+        gray,
+        scaleFactor=1.1,
+        minNeighbors=4,
+        minSize=(30,30)
+    )
 
     for (x,y,w,h) in faces:
+
         cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
 
-    st.image(img, caption="Detected Face", use_column_width=True)
+        shape = detect_face_shape(w,h)
 
-    if len(faces) > 0:
-        if st.button("Generate AI Style"):
-            st.subheader("AI Fashion Suggestions")
+        cv2.putText(
+            img,
+            shape,
+            (x,y-10),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1,
+            (255,0,0),
+            2
+        )
 
-            st.write("Hairstyle:", random.choice(hairstyles))
-            st.write("Outfit:", random.choice(outfits))
-            st.write("Makeup:", random.choice(makeup))
+        st.image(img, caption="AI Face Detection", use_column_width=True)
 
-    else:
-        st.warning("No face detected. Try another image.")
+        st.subheader("AI Analysis")
+
+        st.write("Detected Face Shape:", shape)
+
+        if shape == "Round":
+
+            st.write("Recommended Hairstyle: Textured Fade")
+            st.write("Recommended Outfit: Streetwear Jacket")
+
+        elif shape == "Square":
+
+            st.write("Recommended Hairstyle: Curly Top Fade")
+            st.write("Recommended Outfit: Smart Casual Blazer")
+
+        else:
+
+            st.write("Recommended Hairstyle: Classic Side Part")
+            st.write("Recommended Outfit: Casual V-Neck Outfit")
